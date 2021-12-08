@@ -1,4 +1,17 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# # Data Description for CTG Data
+# ### fetal_health (1,2,3)
+# - 1: Normal
+# - 2: Suspect
+# - 3: Pathological
+
 # # Visual Distribution of 3 classes using bar chart:
+
+# In[1]:
+
+
 import pandas as pd
 import numpy as np
 
@@ -44,7 +57,7 @@ print(data['fetal_health'].value_counts()/N)
 # ##### Note: We are stratifing with respect to the fetal_health attribute 
 # ##### Note: We should never over sample our test data.
 
-
+# In[2]:
 
 
 # Oversample data
@@ -103,13 +116,14 @@ print(test_data['fetal_health'].value_counts()/len(test_data['fetal_health']))
 # In the code, we took the last row of data which is gives me the correlation of everything with fetal_health.
 # 
 
+# In[37]:
 
 
 corr_table = data.corr()
 fh_corr = corr_table.iloc[-1,:].abs().sort_values(ascending=False).to_frame()
 best_attrib = fh_corr.index.values[1:11]
 #Print Top 10 attributes
-print(fh_corr.iloc[1:11])
+print(fh_corr)
 
 
 # ## Result
@@ -124,6 +138,7 @@ print(fh_corr.iloc[1:11])
 # ### Assumption
 # We are currently assuming the attributes are independent.
 
+# In[4]:
 
 
 from scipy.stats import ttest_ind
@@ -147,6 +162,7 @@ for attrib in best_attrib:
 # # Model Development
 # We will now create 2 models, a linear regression model and a naive bayes model.
 
+# In[5]:
 
 
 from sklearn.naive_bayes import GaussianNB
@@ -190,7 +206,7 @@ print(accuracy_score(LR_pred_classes,test_y))
 # 
 # #### Here we are defining a helper function we found online
 
-
+# In[6]:
 
 
 #function found online for multi-class confusion
@@ -237,6 +253,7 @@ def plot_confusion_matrix(cm, classes,
 # 
 # ## Naive Bayes:
 
+# In[7]:
 
 
 from sklearn.metrics import confusion_matrix,roc_auc_score, f1_score
@@ -264,6 +281,8 @@ plot_confusion_matrix(cm,classes=['Normal(1)','Suspect(2)','Pathological(3)'],ti
 # 
 # ## Linear Regression:
 # 
+
+# In[8]:
 
 
 #Binarizing Predictions and Expecteds
@@ -304,7 +323,7 @@ plot_confusion_matrix(cm,classes=['Normal(1)','Suspect(2)','Pathological(3)'],ti
 # 
 #  
 
-# In[21]:
+# In[45]:
 
 
 from sklearn.cluster import KMeans
@@ -343,21 +362,21 @@ def cluster_metrics(k):
 
 # # Let's get our metrics!
 
-# In[22]:
+# In[46]:
 
 
 cluster_metrics(5)
 #print(classification_report(test_y, cluster_preds[5], digits=3,labels=[1.0,2.0,3.0]))
 
 
-# In[23]:
+# In[47]:
 
 
 cluster_metrics(10)
 #print(classification_report(test_y, cluster_preds[10], digits=3,labels=[1.0,2.0,3.0]))
 
 
-# In[24]:
+# In[48]:
 
 
 cluster_metrics(15)
@@ -420,12 +439,12 @@ cluster_metrics(15)
 # In this case, it seems like oversampling the dataset was not necessary. Just by looking at our metrics,
 # the Naive Bayes classifier on the stratified dataset is the best model of the 9 tested.
 # 
-# Surprisingly when oversampling the data, we saw that the metrics slightly decreased per model. This could be attributed to potential overfitting.
+# Originally the clustering model suffered from the class imbalance, on the oversampled, stratified trial we saw its metrics being slightly improved.
 # 
-# When Looking at the clustering data, we can definitly see there are proper clusters that seem to corrolate well to each other but futher analysis will be needed to learn what each cluster means for fetal_health
+# Surprisingly when oversampling the data, we saw that the metrics slightly decreased per model. This could be attributed to potential overfitting.
 # 
 # 
 # ## Best Model and Preprocessing
-# Out of everything we tested, we can infer that there is no need to oversample out data and we can stratify against the fetal_health attribute when splitting up the dataset. 
+# Out of everything we tested, we can infer that there is no need to oversample out data and we can stratify agaisnt the fetal_health attribute when splitting up the dataset. 
 # 
 # The best model is the Naive Bayes model and that will be the model of choice for any predictive work.
